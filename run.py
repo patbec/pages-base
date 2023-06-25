@@ -256,7 +256,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
     def execute_request(self):
         try:
             for item in self.data:
-                if (item.path.startswith(self.path)):
+                if (self.path.startswith(item.path)):
                     self.send_response(item.response)
                     self.send_header('Content-type', 'text/html')
                     self.end_headers()
