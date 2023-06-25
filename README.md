@@ -10,15 +10,24 @@ A `config.json` file is used to define the web pages and routes, [see here for e
 
 These environment variables can be overridden in the `Dockerfile` or `docker-compose.yml` file:
 
-
 | Setting            | Description                                  | Default Value |
 | ------------------ | -------------------------------------------- | ------------- |
 | `APP_CONFIG_FILE`  | Path to the configuration file.              | `config.json` |
 | `APP_HTTP_PORT`    | The web pages are served under this port.    | `8090`        |
 | `APP_HTTP_ADDRESS` | The web pages are served under this address. | `0.0.0.0`     |
 
-
 > The built-in web server should not be publicly accessible. Use a reverse proxy to access the content.
+
+## Extensions
+
+Variables can be inserted into the template using the Jinja2 syntax `{ sample }}`, there are built-in extensions to perform additional actions.
+
+| Action      | Example                                                 | Description                                                             |
+| ----------- | ------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `escape`    | `<p>{{ sample \| escape }}</p>`                        | Convert an email address or words with special characters to html text. |
+| `urlencode` | `<a href="mailto:{{ sample \| urlencode }}">Click</a>` | Convert an email address to a encoded url.                    |
+
+> It is recommended to use the **escape** action, especially for custom environment variables - otherwise text encoding may be broken or script tags may be inserted into the template.
 
 ## Examples
 
@@ -87,6 +96,8 @@ After launching the Docker container, the website is now available under:
 - http://localhost:8090/sample.html
 
 </details>
+
+---
 
 ### Predefined variables
 
@@ -163,6 +174,8 @@ After launching the Docker container, the two website are now accessible under:
 
 </details>
 
+---
+
 ### Environment variables
 
 In this example, **user-defined environment variables** are used in the HTML template.
@@ -221,8 +234,7 @@ If the `environment_filter` property contains an **empty string**, all host envi
 </html>
 ```
 
-The env property is a dictionary and contains the loaded variables. [See here](#escape-html) how to escape values with the `escape` filter.
-
+The env property is a dictionary and contains the loaded variables. [See here](#extensions) how to escape values with the `escape` filter.
 
 #### File Dockerfile:
 ```dockerfile
@@ -241,6 +253,8 @@ After launching the Docker container, the two website are now accessible under:
 - http://localhost:8090/sample-02.html
 
 </details>
+
+---
 
 ### Requests path
 
@@ -313,27 +327,7 @@ After launching the Docker container, the three website are now accessible under
 
 </details>
 
-## Extensions
-
-Variables can be inserted with the Jinja2 syntax `{{ sample }}`, there are built-in extensions to perform additional actions.
-
-### Escape
-
-Convert an email address or words with special characters to html text.
-
-```html
-<p>{{ sample | escape }}</p>
-```
-
-> It is recommended to use this option, especially for custom environment variables - otherwise text encoding may be broken or script tags may be inserted into the template.
-
-### Urlencode
-
-Convert an email address or a link to a encoded url.
-
-```html
-<a href="mailto:{{ sample | urlencode }}">Click here to send a mail to {{ sample | escape }}</a>
-```
+---
 
 ## Licence
 
