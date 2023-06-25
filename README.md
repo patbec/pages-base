@@ -27,7 +27,7 @@ Variables can be inserted into the template using the Jinja2 syntax `{ sample }}
 | `escape`    | `<p>{{ sample \| escape }}</p>`                        | Convert an email address or words with special characters to html text. |
 | `urlencode` | `<a href="mailto:{{ sample \| urlencode }}">Click</a>` | Convert an email address to a encoded url.                    |
 
-> It is recommended to use the **escape** action, especially for custom environment variables - otherwise text encoding may be broken or script tags may be inserted into the template.
+> It is recommended to use the **escape** action, especially for custom environment variables - otherwise text encoding may be broken or script tags can be inserted into the template.
 
 ## Examples
 
