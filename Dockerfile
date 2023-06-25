@@ -6,7 +6,8 @@ RUN adduser -D python
 USER python
 WORKDIR /data
 
-ENV APP_CONFIG_FILE="config.json"
+ENV PYTHONUNBUFFERED="1"
+ENV PYTHONIOENCODING="UTF-8"
 
 ADD run.py /data/run.py
 
