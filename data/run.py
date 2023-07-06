@@ -10,11 +10,15 @@ from jsonschema import *
 from jinja2 import *
 
 
+DEBUG_ENABLED = int(os.environ.get('PAGES_DEBUG', "0"))
+
+
 #
 # Console colors.
 #
 class Console:
     FAIL = '\033[0;1;31m'
+    DEBUG = '\033[0;1;37m'
     ENDC = '\033[0m'
 
 
@@ -27,6 +31,9 @@ class Log():
 
     def error(message, section):
         print("[" + section + "] " + Console.FAIL + message + Console.ENDC)
+
+    def debug(message, section):
+        print("[" + section + "] " + Console.DEBUG + message + Console.ENDC)
 
 
 #
@@ -52,10 +59,13 @@ class UserEnvironmentVariables():
             if (key.startswith(environment_prefix)):
                 environment_variables[key] = value
 
+                if (DEBUG_ENABLED):
+                    Log.debug("Read environment key " + key, Log.BUILD)
+
         return environment_variables
 
 
-@dataclass
+@ dataclass
 class PageItem():
     path: str
     response: int
@@ -147,8 +157,7 @@ class App():
     # Loads the config.json file.
     #
     def load_config(self):
-
-        config_file = os.environ.get('APP_CONFIG_FILE', 'config.json')
+        config_file = os.environ.get('PAGES_CONFIG_FILE', 'config.json')
 
         Log.message(f"Load settings from '{config_file}'.", Log.BUILD)
 
@@ -188,6 +197,9 @@ class App():
 
         # Create list of html pages.
         for item in config['server']:
+            Log.message(
+                f"Template { item['template_file'] } for { item['request']['path'] }", Log.BUILD)
+
             # Merge specific page and global variables.
             variables = item['variables'] | config['default']['variables']
 
@@ -218,8 +230,8 @@ class Webserver():
     # Load config from environment.
     #
     def load_config(self):
-        self.http_port = os.environ.get('APP_HTTP_PORT', "8090")
-        self.http_address = os.environ.get('APP_HTTP_ADDRESS', "0.0.0.0")
+        self.http_port = os.environ.get('PAGES_HTTP_PORT', "8090")
+        self.http_address = os.environ.get('PAGES_HTTP_ADDRESS', "0.0.0.0")
         self.data = data
 
     #
@@ -249,22 +261,28 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         Log.message(
             "Request " + str(args), Log.SERVER)
 
+    def log_debug(self, item, count):
+        Log.debug(
+            f"Request '{ self.path }' matches filter '{ item.path }' at item {count}", Log.SERVER)
+
     def log_error(self, format, *args):
         Log.error(
             "Exception " + str(args), Log.SERVER)
 
+    def do_POST(self):
+        self.execute_request()
+
+    def do_GET(self):
+        self.execute_request()
+
     def execute_request(self):
         try:
-            for item in self.data:
-                if (self.path.startswith(item.path)):
-                    self.send_response(item.response)
-                    self.send_header('Content-type', 'text/html')
-                    self.end_headers()
+            requested_page_found = self.try_send_response()
 
-                    self.wfile.write(item.content)
-                    return
+            # Return when the requested page was found and sent.
+            if (requested_page_found):
+                return
 
-            # Requested page not found in config.json
             self.send_response(404)
             self.send_header('Content-type', 'text/html')
             self.end_headers()
@@ -282,17 +300,35 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 
             self.log_error("", error)
 
-    def do_POST(self):
-        self.execute_request()
+    def try_send_response(self):
+        count = 0
 
-    def do_GET(self):
-        self.execute_request()
+        for item in self.data:
+            count += 1
+            if (self.path.startswith(item.path)):
+                if (DEBUG_ENABLED):
+                    self.log_debug(item, count)
+
+                self.send_response(item.response)
+                self.send_header('Content-type', 'text/html')
+                self.end_headers()
+
+                self.wfile.write(item.content)
+
+                # Requested page found
+                return True
+
+        # Requested page not found
+        return False
 
 
 #
 # Generates static HTML pages from a template and environment variables.
 #
 try:
+    if (DEBUG_ENABLED):
+        Log.debug("Debug mode enabled", Log.BUILD)
+
     templates = App()
 
     templates.load_config()

@@ -10,24 +10,29 @@ A `config.json` file is used to define the web pages and routes, [see here for e
 
 These environment variables can be overridden in the `Dockerfile` or `docker-compose.yml` file:
 
-| Setting            | Description                                  | Default Value |
-| ------------------ | -------------------------------------------- | ------------- |
-| `APP_CONFIG_FILE`  | Path to the configuration file.              | `config.json` |
-| `APP_HTTP_PORT`    | The web pages are served under this port.    | `8090`        |
-| `APP_HTTP_ADDRESS` | The web pages are served under this address. | `0.0.0.0`     |
+| Setting              | Description                                  | Default Value |
+| -------------------- | -------------------------------------------- | ------------- |
+| `PAGES_CONFIG_FILE`  | Path to the configuration file.              | `config.json` |
+| `PAGES_HTTP_PORT`    | The web pages are served under this port.    | `8090`        |
+| `PAGES_HTTP_ADDRESS` | The web pages are served under this address. | `0.0.0.0`     |
+| `PAGES_DEBUG`        | Enables the debug mode.                      | `0`           |
 
 > The built-in web server should not be publicly accessible. Use a reverse proxy to access the content.
 
 ## Extensions
 
-Variables can be inserted into the template using the Jinja2 syntax `{ sample }}`, there are built-in extensions to perform additional actions.
+Variables can be inserted into the template using the Jinja2 syntax `{{ sample }}`, there are built-in extensions to perform additional actions.
 
-| Action      | Example                                                 | Description                                                             |
+| Action      | Example                                                | Description                                                             |
 | ----------- | ------------------------------------------------------ | ----------------------------------------------------------------------- |
 | `escape`    | `<p>{{ sample \| escape }}</p>`                        | Convert an email address or words with special characters to html text. |
-| `urlencode` | `<a href="mailto:{{ sample \| urlencode }}">Click</a>` | Convert an email address to a encoded url.                    |
+| `urlencode` | `<a href="mailto:{{ sample \| urlencode }}">Click</a>` | Convert an email address to a encoded url.                              |
 
 > It is recommended to use the **escape** action, especially for custom environment variables - otherwise text encoding may be broken or script tags can be inserted into the template.
+
+## Testing
+
+TODO
 
 ## Examples
 
