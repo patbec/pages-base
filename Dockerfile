@@ -1,12 +1,5 @@
 FROM python:3-alpine
 
-ENV VERSION=1.0.0
-
-LABEL maintainer="Patrick Becker" \
-  org.opencontainers.image.url="https://github.com/patbec/pages-base" \
-  org.opencontainers.image.version="${VERSION}" \
-  org.opencontainers.image.licenses="MIT"
-
 RUN adduser -D python
 USER python
 WORKDIR /data
