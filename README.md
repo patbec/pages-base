@@ -160,7 +160,7 @@ This basic example returns a page under the path `/sample.html` with response co
 
 #### File Dockerfile:
 ```dockerfile
-FROM <pages-base>
+FROM ghcr.io/patbec/pages-base:latest
 
 ADD ./config.json /data/config.json
 ADD ./index.html /data/index.html
@@ -236,7 +236,7 @@ In this example **page specific** and **global variables** are used in the HTML 
 
 #### File Dockerfile:
 ```dockerfile
-FROM <pages-base>
+FROM ghcr.io/patbec/pages-base:latest
 
 ADD ./config.json /data/config.json
 ADD ./index.html /data/index.html
@@ -312,7 +312,7 @@ The env property is a dictionary and contains the loaded variables. [See here](#
 
 #### File Dockerfile:
 ```dockerfile
-FROM <pages-base>
+FROM ghcr.io/patbec/pages-base:latest
 
 ENV SAMPLE_VAR="Hello World from Dockerfile"
 
@@ -388,7 +388,7 @@ The `path` property always checks if an incoming request starts with this string
 
 #### File Dockerfile:
 ```dockerfile
-FROM <pages-base>
+FROM ghcr.io/patbec/pages-base:latest
 
 ADD ./config.json /data/config.json
 ADD ./index.html /data/index.html
