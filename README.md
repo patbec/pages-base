@@ -30,9 +30,78 @@ Variables can be inserted into the template using the Jinja2 syntax `{{ sample }
 
 > It is recommended to use the **escape** action, especially for custom environment variables - otherwise text encoding may be broken or script tags can be inserted into the template.
 
-## Testing
+## Development
 
-TODO
+To test your template the application can be started locally, create a file named `config.json` and `index.html` in the `data` folder. Examples are included in the next section.
+
+```shell
+export PAGES_CONFIG_FILE="config.json"
+export PAGES_HTTP_PORT="8090"
+export PAGES_HTTP_ADDRESS="localhost"
+export PAGES_DEBUG="1"
+
+cd data
+python3 run.py
+```
+
+<details>
+<summary>Sample output</summary>
+
+```
+[Building] Debug mode enabled
+[Building] Load settings from 'config.json'.
+[Building] Load environment variables with the prefix 'PROXY_'.
+[Building] Read environment key PROXY_SUPPORT_MESSAGE
+[Building] Read environment key PROXY_NAME
+[Building] Read environment key PROXY_LOCATION
+[Building] Read environment key PROXY_SUPPORT_MAIL
+[Building] Generate HTML pages...
+[Building] Template index.html for /400.html
+[Building] Template index.html for /401.html
+[Building] Template index.html for /403.html
+[Building] Template index.html for /404.html
+[Building] Template index.html for /405.html
+[Building] Template index.html for /406.html
+[Building] Template index.html for /407.html
+[Building] Template index.html for /408.html
+[Building] Template index.html for /409.html
+[Building] Template index.html for /410.html
+[Building] Template index.html for /411.html
+[Building] Template index.html for /412.html
+[Building] Template index.html for /413.html
+[Building] Template index.html for /414.html
+[Building] Template index.html for /415.html
+[Building] Template index.html for /416.html
+[Building] Template index.html for /417.html
+[Building] Template index.html for /418.html
+[Building] Template index.html for /421.html
+[Building] Template index.html for /422.html
+[Building] Template index.html for /423.html
+[Building] Template index.html for /424.html
+[Building] Template index.html for /425.html
+[Building] Template index.html for /426.html
+[Building] Template index.html for /428.html
+[Building] Template index.html for /429.html
+[Building] Template index.html for /431.html
+[Building] Template index.html for /451.html
+[Building] Template index.html for /500.html
+[Building] Template index.html for /501.html
+[Building] Template index.html for /502.html
+[Building] Template index.html for /503.html
+[Building] Template index.html for /504.html
+[Building] Template index.html for /505.html
+[Building] Template index.html for /506.html
+[Building] Template index.html for /507.html
+[Building] Template index.html for /508.html
+[Building] Template index.html for /510.html
+[Building] Template index.html for /511.html
+[Building] Template index.html for /
+[Building] Build completed (40 pages)
+[Server] Listen on localhost:8090
+[Server] Request '/' matches filter '/' at item 40
+[Server] Request ('GET / HTTP/1.1', '404', '-')
+```
+</details>
 
 ## Examples
 
