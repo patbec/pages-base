@@ -16,6 +16,7 @@ These environment variables can be overridden in the `Dockerfile` or `docker-com
 | `PAGES_HTTP_PORT`    | The web pages are served under this port.    | `8090`        |
 | `PAGES_HTTP_ADDRESS` | The web pages are served under this address. | `0.0.0.0`     |
 | `PAGES_DEBUG`        | Enables the debug mode.                      | `0`           |
+| `PAGES_TEST`         | Enables the config test mode.                | `0`           |
 
 > The built-in web server should not be publicly accessible. Use a reverse proxy to access the content.
 

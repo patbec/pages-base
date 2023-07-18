@@ -11,6 +11,7 @@ from jinja2 import *
 
 
 DEBUG_ENABLED = int(os.environ.get('PAGES_DEBUG', "0"))
+TEST_ENABLED = int(os.environ.get('PAGES_TEST', "0"))
 
 
 #
@@ -345,6 +346,11 @@ except UndefinedError as error:
 except Exception as error:
     print("An exception occurred:" + Console.FAIL, error)
     sys.exit(1)
+
+
+if (TEST_ENABLED):
+    Log.debug("Test successfully completed.", Log.BUILD)
+    sys.exit(0)
 
 
 #
