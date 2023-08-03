@@ -3,6 +3,7 @@ import sys
 import json
 import html
 import pathlib
+import signal
 
 from dataclasses import dataclass
 from http.server import *
@@ -10,8 +11,8 @@ from jsonschema import *
 from jinja2 import *
 
 
-DEBUG_ENABLED = int(os.environ.get('PAGES_DEBUG', "0"))
-TEST_ENABLED = int(os.environ.get('PAGES_TEST', "0"))
+ENVIRONMENT_DEBUG_ENABLED = int(os.environ.get('PAGES_DEBUG', "0"))
+ENVIRONMENT_TEST_ENABLED = int(os.environ.get('PAGES_TEST', "0"))
 
 
 #
@@ -37,6 +38,15 @@ class Log():
         print("[" + section + "] " + Console.DEBUG + message + Console.ENDC)
 
 
+class Signals():
+    def handle_sigterm(*args):
+        Log.message("SIGQUIT received", Log.SERVER)
+        raise KeyboardInterrupt()
+
+    def register(self):
+        signal.signal(signal.SIGTERM, self.handle_sigterm)
+
+
 #
 # Returns a filtered dict of environment variables.
 #
@@ -60,7 +70,7 @@ class UserEnvironmentVariables():
             if (key.startswith(environment_prefix)):
                 environment_variables[key] = value
 
-                if (DEBUG_ENABLED):
+                if (ENVIRONMENT_DEBUG_ENABLED):
                     Log.debug("Read environment key " + key, Log.BUILD)
 
         return environment_variables
@@ -307,7 +317,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         for item in self.data:
             count += 1
             if (self.path.startswith(item.path)):
-                if (DEBUG_ENABLED):
+                if (ENVIRONMENT_DEBUG_ENABLED):
                     self.log_debug(item, count)
 
                 self.send_response(item.response)
@@ -327,7 +337,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 # Generates static HTML pages from a template and environment variables.
 #
 try:
-    if (DEBUG_ENABLED):
+    if (ENVIRONMENT_DEBUG_ENABLED):
         Log.debug("Debug mode enabled", Log.BUILD)
 
     templates = App()
@@ -348,7 +358,7 @@ except Exception as error:
     sys.exit(1)
 
 
-if (TEST_ENABLED):
+if (ENVIRONMENT_TEST_ENABLED):
     Log.debug("Test successfully completed.", Log.BUILD)
     sys.exit(0)
 
@@ -357,6 +367,9 @@ if (TEST_ENABLED):
 # Serves the HTML pages via a web server.
 #
 try:
+    signals = Signals()
+    signals.register()
+
     webserver = Webserver()
     webserver.data = data
     webserver.load_config()
@@ -367,4 +380,4 @@ except Exception as error:
     sys.exit(1)
 
 except KeyboardInterrupt:
-    sys.exit(1)
+    sys.exit(0)
